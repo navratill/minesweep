@@ -4,7 +4,9 @@ import { SIZE } from "../consts";
 
 export interface IGame {
   state: GameStates;
+  round: number;
   seconds: number;
+  deaths: number;
   board: Board;
 }
 

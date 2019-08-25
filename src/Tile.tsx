@@ -1,12 +1,11 @@
 import React from 'react';
-import { TILE_SIZE } from './consts';
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
-import logo from './mine.png';
+import { TILE_SIZE, STYLE_EMBOSS } from './consts';
 import { Actions } from './redux/actions';
 import { ITile } from './ITile';
 import { GameStates } from './GameStates';
+import { Dispatch } from 'redux';
 import { IGame } from './redux/game';
+import { connect } from 'react-redux';
 
 interface Props {
     tile: ITile;
@@ -27,13 +26,9 @@ const Tile: React.FC<Props> = ({ tile, gameState, flip, toggleFlag }) => {
     } as any;
 
     let style = {
-        width: TILE_SIZE - 1 - 14,
-        height: TILE_SIZE - 1 - 12,
-        backgroundColor: "#ccc",
-        borderTop: "4px solid #eee",
-        borderLeft: "10px solid #666",
-        borderBottom: "8px solid #333",
-        borderRight: "4px solid #c0c0c0",
+        width: TILE_SIZE - 7,
+        height: TILE_SIZE - 6,
+        ...STYLE_EMBOSS,
         cursor: "pointer",
         display: "flex",
         alignItems: "center",
@@ -41,23 +36,24 @@ const Tile: React.FC<Props> = ({ tile, gameState, flip, toggleFlag }) => {
     } as any;
 
     if (gameState === GameStates.READY) {
-        const styleOverride = {
-            backgroundColor: "#ccc",
-            borderTop: "4px solid #eee",
-            borderLeft: "10px solid #888",
-            borderBottom: "8px solid #555",
-            borderRight: "4px solid #c0c0c0"
-        } as any;
-        style = { ...style, ...styleOverride };
-        delete style.cursor;
+        style = {
+            backgroundColor: "white",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: TILE_SIZE,
+            height: TILE_SIZE,
+            border: "1px solid grey"
+        };
     }
 
     if (tile.isFlipped) {
         style = {
             ...style,
-            width: TILE_SIZE - 1,
-            height: TILE_SIZE - 1,
-            backgroundColor: "#ddd",
+            width: TILE_SIZE -2,
+            height: TILE_SIZE -2,
+            backgroundColor: "rgba(255, 255, 255, 0.8)",
+            border: "1px solid white",
             cursor: "normal",
             borderTop: "none",
             borderLeft: "none",
@@ -67,7 +63,7 @@ const Tile: React.FC<Props> = ({ tile, gameState, flip, toggleFlag }) => {
     }
 
     if (gameState === GameStates.OVER && tile.hasMine) {
-        style.fontSize = "1.7em";
+
     }
 
     let content = null;
@@ -77,10 +73,17 @@ const Tile: React.FC<Props> = ({ tile, gameState, flip, toggleFlag }) => {
             content = null;
         }
     } else if (tile.hasFlag) {
-        content = "🌵"; // "🚩🌵"
+        content = "🌴";
     }
     if (gameState === GameStates.OVER && tile.hasMine) {
-        content = "💥"; //<img src={logo} style={{ width: style.width, height: style.height }} />;
+        content = "🐙"; //<img src={logo} style={{ width: style.width, height: style.height }} />;
+    }
+
+    const triggerFlip = (e: any) => {
+        if (gameState === GameStates.RUNNING && !tile.isFlipped) {
+            toggleFlag(tile);
+        }
+        e.preventDefault();
     }
 
     return (
@@ -88,16 +91,11 @@ const Tile: React.FC<Props> = ({ tile, gameState, flip, toggleFlag }) => {
             <div
                 style={style}
                 onClick={() => {
-                    if (gameState === GameStates.RUNNING) {
+                    if (gameState === GameStates.RUNNING && !tile.hasFlag) {
                         flip(tile);
                     }
                 }}
-                onContextMenu={(e) => {
-                    if (gameState === GameStates.RUNNING && !tile.isFlipped) {
-                        toggleFlag(tile);
-                    }
-                    e.preventDefault();
-                }}
+                onContextMenu={triggerFlip}
             >
                 <div>{content}</div>
             </div>

@@ -1,11 +1,9 @@
 import React from 'react';
 import './App.css';
-import { SIZE } from './consts';
+import { SIZE, MAX_SECONDS, MAX_ROUNDS } from './consts';
 import { Provider } from 'react-redux';
 import { Store, createStore } from 'redux';
-import { combineReducers } from 'redux';
 import Game from './Game';
-import { Board, ITile } from './ITile';
 import { Actions } from './redux/actions';
 import { GameStates } from './GameStates';
 import { IGame, createBoard, isVictorious, avalancheFlip } from './redux/game';
@@ -17,13 +15,15 @@ function startTimer() {
 }
 let timer: any;
 
-const MAX_SECONDS = 69;
+
 
 function createNewGame(): IGame {
   return {
     state: GameStates.READY,
+    round: 1,
     seconds: MAX_SECONDS,
-    board: createBoard(SIZE)
+    board: createBoard(SIZE),
+    deaths: 0
   };
 };
 
@@ -34,8 +34,6 @@ declare global {
 }
 
 const reducer = (state: IGame, action: any) => {
-  console.log("action", action);
-
   switch (action.type) {
     case Actions.PLAY:
         timer = startTimer();
@@ -48,14 +46,26 @@ const reducer = (state: IGame, action: any) => {
         return { ...state, seconds: state.seconds-1 };
       }
     case Actions.REFRESH:
-      clearInterval(timer);
-      return {
-        ...state,
-        ...createNewGame()
+      if (state.state === GameStates.ALL_LEVELS_COMPLETE) {
+        return createNewGame();
+      }
+
+      let result = {
+        ...createNewGame(),
+        round: state.round,
+        deaths: state.deaths
       };
+      clearInterval(timer);
+      if (state.state === GameStates.VICTORY) {
+        result.round++;
+      }
+      if (result.round > MAX_ROUNDS) {
+        result.state = GameStates.ALL_LEVELS_COMPLETE;
+      }
+      return result;
     case Actions.EXPLODE:
       clearInterval(timer);
-      return { ...state, state: GameStates.OVER };
+      return { ...state, state: GameStates.OVER, deaths: state.deaths+1 };
     case Actions.FLIP:
       const tile = state.board[action.tile.row][action.tile.col];
       avalancheFlip(tile, state.board);

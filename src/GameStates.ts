@@ -3,5 +3,6 @@ export enum GameStates {
     RUNNING = "RUNNING",
     OVER = "OVER",
     TIMEOUT = "TIMEOUT",
-    VICTORY = "VICTORY"
+    VICTORY = "VICTORY",
+    ALL_LEVELS_COMPLETE = "ALL_LEVELS_COMPLETE"
 }
