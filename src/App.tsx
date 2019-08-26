@@ -1,29 +1,12 @@
 import React from 'react';
 import './App.css';
-import { SIZE, MAX_SECONDS, MAX_ROUNDS } from './consts';
+import { MAX_ROUNDS } from './consts';
 import { Provider } from 'react-redux';
 import { Store, createStore } from 'redux';
 import Game from './Game';
 import { Actions } from './redux/actions';
 import { GameStates } from './GameStates';
-import { IGame, createBoard, isVictorious, avalancheFlip } from './redux/game';
-
-function startTimer() {
-    return setInterval(() => {
-        store.dispatch({ type: Actions.ONE_SECOND_TICK });
-    }, 1000);
-}
-let timer: any;
-
-function createNewGame(): IGame {
-    return {
-        state: GameStates.READY,
-        round: 1,
-        seconds: MAX_SECONDS,
-        board: createBoard(SIZE),
-        deaths: 0
-    };
-};
+import { IGame, isVictorious, avalancheFlip, createNewGame } from './redux/game';
 
 declare global {
     interface Window {
@@ -35,20 +18,10 @@ const reducer = (state: IGame, action: any) => {
     switch (action.type) {
 
         case Actions.PLAY:
-            timer = startTimer();
             return { ...state, state: GameStates.RUNNING };
-
-        case Actions.ONE_SECOND_TICK:
-            if (state.seconds === 1) {
-                clearInterval(timer);
-                return { ...state, seconds: 0, state: GameStates.TIMEOUT };
-            } else {
-                return { ...state, seconds: state.seconds - 1 };
-            }
 
         case Actions.REFRESH:
             if (state.state === GameStates.ALL_LEVELS_COMPLETE) {
-                clearInterval(timer);
                 return createNewGame();
             }
 
@@ -58,19 +31,16 @@ const reducer = (state: IGame, action: any) => {
                 state: GameStates.RUNNING,
                 deaths: state.deaths
             };
-            clearInterval(timer);
             if (result.round === MAX_ROUNDS) {
                 result.state = GameStates.ALL_LEVELS_COMPLETE;
                 return result;
             }
-            timer = startTimer();
             if (state.state === GameStates.VICTORY) {
                 result.round++;
             }
             return result;
 
         case Actions.EXPLODE:
-            clearInterval(timer);
             return { ...state, state: GameStates.OVER, deaths: state.deaths + 1 };
 
         case Actions.FLIP:
@@ -78,7 +48,6 @@ const reducer = (state: IGame, action: any) => {
             avalancheFlip(tile, state.board);
             state.board = [...state.board];
             if (isVictorious(state.board)) {
-                clearInterval(timer);
                 return { ...state, state: GameStates.VICTORY };
             }
             return { ...state };
@@ -91,6 +60,10 @@ const reducer = (state: IGame, action: any) => {
         case Actions.CHEAT_WIN:
             state.state = GameStates.VICTORY;
             return { ...state };
+
+        case Actions.TIMEOUT:
+            state.state = GameStates.TIMEOUT;
+            return { ...state};
     }
     return state;
 };

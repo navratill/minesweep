@@ -3,7 +3,7 @@ export enum Actions {
     PLAY = "PLAY",
     FLIP = "FLIP",
     EXPLODE = "EXPLODE",
-    ONE_SECOND_TICK = "ONE_SECOND_TICK",
     TOGGLE_FLAG = "TOGGLE_FLAG",
-    CHEAT_WIN = "CHEAT_WIN"
+    CHEAT_WIN = "CHEAT_WIN",
+    TIMEOUT = "TIMEOUT"
 }

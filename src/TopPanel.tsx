@@ -4,6 +4,7 @@ import { IGame } from './redux/game';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { Actions } from './redux/actions';
+import Timer from './Timer';
 
 interface Props {
     game: IGame;
@@ -44,13 +45,13 @@ const TopPanel: React.FC<Props> = ({ game, go, refresh }) => {
         resetText = "Again!";
     }
 
-    let status = <div>⏳{game.seconds} s</div>
+    let status = <Timer/>;
     if (game.state === GameStates.OVER) {
-        status = <div className="swing-in-bottom-fwd">☠️</div>
+        status = <div className="swing-in-bottom-fwd">☠️</div>;
     } else if (game.state === GameStates.VICTORY) {
-        status = <div className="swing-in-bottom-fwd">🏆😎🏆</div>
+        status = <div className="swing-in-bottom-fwd">🏆😎🏆</div>;
     } else if (game.state === GameStates.TIMEOUT) {
-        status = <div className="swing-in-bottom-fwd">😭</div>
+        status = <div className="swing-in-bottom-fwd">😭</div>;
     }
 
     return (

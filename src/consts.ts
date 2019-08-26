@@ -1,7 +1,7 @@
 export const SIZE = 6;
 export const TILE_SIZE = 30;
 export const MAX_ROUNDS = 7;
-export const MAX_SECONDS = 19;
+export const MAX_SECONDS = 18;
 
 export const STYLE_EMBOSS = {
     backgroundColor: "#ccc",
