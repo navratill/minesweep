@@ -1,6 +1,7 @@
 import { GameStates } from "../GameStates";
 import { Board, ITile } from "../ITile";
 import { SIZE } from "../consts";
+import { booleanLiteralTypeAnnotation } from "@babel/types";
 
 export interface IGame {
   state: GameStates;

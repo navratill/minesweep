@@ -41,8 +41,8 @@ const Tile: React.FC<Props> = ({ tile, gameState, flip, toggleFlag }) => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            width: TILE_SIZE,
-            height: TILE_SIZE,
+            width: TILE_SIZE -2,
+            height: TILE_SIZE -2,
             border: "1px solid grey"
         };
     }
@@ -62,8 +62,8 @@ const Tile: React.FC<Props> = ({ tile, gameState, flip, toggleFlag }) => {
         }
     }
 
-    if (gameState === GameStates.OVER && tile.hasMine) {
-
+    if (gameState !== GameStates.RUNNING) {
+        delete style.cursor;
     }
 
     let content = null;
@@ -74,7 +74,10 @@ const Tile: React.FC<Props> = ({ tile, gameState, flip, toggleFlag }) => {
         }
     } else if (tile.hasFlag) {
         content = "🌴";
+    } else if (gameState === GameStates.READY) {
+        content = "❤️";   
     }
+
     if (gameState === GameStates.OVER && tile.hasMine) {
         content = "🐙"; //<img src={logo} style={{ width: style.width, height: style.height }} />;
     }
@@ -86,6 +89,13 @@ const Tile: React.FC<Props> = ({ tile, gameState, flip, toggleFlag }) => {
         e.preventDefault();
     }
 
+    let styleContent = {};
+    if (gameState === GameStates.READY) {
+        styleContent = {
+            animation: "rotate 1000ms linear infinite"
+        };
+    }
+    
     return (
         <div style={styleParent}>
             <div
@@ -97,7 +107,7 @@ const Tile: React.FC<Props> = ({ tile, gameState, flip, toggleFlag }) => {
                 }}
                 onContextMenu={triggerFlip}
             >
-                <div>{content}</div>
+                <div style={styleContent}>{content}</div>
             </div>
         </div>
     );
