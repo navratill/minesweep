@@ -1,7 +1,7 @@
 {
-  "homepage": "http://hafing.cz/beachsweeper",
+  "homepage": ".",
   "name": "beach_sweeper",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "dependencies": {
     "@types/jest": "24.0.18",
