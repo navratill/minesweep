@@ -1,3 +1,5 @@
+update1
+
 *This project is public only for presentation purposes. You have no permission to use, modify, or share the software.*
 
 [Try it](http://hafing.cz/beachsweeper/)
